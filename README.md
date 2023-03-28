@@ -45,3 +45,9 @@ Change number to change port number of Admin dashboard (Default auth key is "adm
 }
 ```
 Change this to edit embed color
+
+# Change and inquiring
+If you want to contribute this project, please tell me why.
+If you have a question or problem, please submit it to issue or pullrequests.
+
+Thank you!
