@@ -1,6 +1,8 @@
 # NetHacker-Music
 Nice music bot of discord.js v14
 
+![image](https://user-images.githubusercontent.com/89511960/228160960-00f07b65-fa48-4dcb-afb6-834be32876f3.png)
+
 # Functions
 Play 
 
