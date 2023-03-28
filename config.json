@@ -1,0 +1,15 @@
+{
+	"token": {
+		"bot": "Your token goes here "
+	},
+	"bot": {
+		"applicationId": "Your application Id goes here",
+	},
+	"config": {
+		"version": "1.0.0",
+		"port": 53134,
+		"color": {
+			"info": "#3edece"
+		}
+	}
+}
