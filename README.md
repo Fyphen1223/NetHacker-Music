@@ -16,3 +16,32 @@ node index.js
 to run the bot
 
 Ctrl + C * 2 to kill the bot
+
+# Config
+go to config.json
+
+```
+"token": {
+	"bot": "Your token goes here "
+},
+```
+Change this to your bot token
+
+```
+"bot": {
+	"applicationId": "Your application Id goes here",
+},
+```
+Change this to your application Id
+
+```
+"port": 53134,
+```
+Change number to change port number of Admin dashboard (Default auth key is "admin" and "password", if you want to change it, please edit code.)
+
+```
+"color": {
+	"info": "#3edece"
+}
+```
+Change this to edit embed color
