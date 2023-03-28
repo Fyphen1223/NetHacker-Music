@@ -5,7 +5,7 @@ Nice music bot of discord.js v14
 
 This will be ready of your bot
 ![image](https://user-images.githubusercontent.com/89511960/228161298-9ca33caf-5132-4128-8103-a7bafdd11667.png)
-(Wait, boot time is 130s...!? What's going on with here... Basically, it will boot in 5s
+(Wait, boot time is 115s...!? What's going on with here... Basically, it will boot in 5s
 
 Music:
 ![image](https://user-images.githubusercontent.com/89511960/228162248-90a7d3a5-d0f0-4b1f-aa67-11341d8e97e9.png)
