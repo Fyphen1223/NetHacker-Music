@@ -50,8 +50,6 @@ const REST = require("rest");
 const fetch = require('axios');
 const whois = new require('whois');
 const lyricsFinder = require('lyrics-finder');
-const { NekoBot } = require("nekobot-api");
-const api = new NekoBot();
 const ytdl = require('ytdl-core');
 const ytpl = require('ytpl');
 const express = require('express');
@@ -107,19 +105,6 @@ const ffmpeg = require('fluent-ffmpeg');
 const gtts = require('node-gtts')('en');
 const jpGtts = require('node-gtts')('ja');
 //env
-const updaterInfo = {
-    url: 'https://G-Music-Bot.ssfyphen.repl.co',
-    method: 'GET'
-};
-const currentVersion = "1.0.2 - B";
-const updater = require("request");
-updater(updaterInfo, function (error, response, body) {
-	if(body !== currentVersion) {
-		createWarn(`Please update Net Hacker! Current Version: ${currentVersion} Latest Version: ${body}`);
-	} else {
-		return;
-	}
-});
 function generateTimeString() {
 	return `${new Date().toLocaleString()}`;
 }
@@ -162,9 +147,6 @@ client.on('ready', async () => {
   		guildNameList.push(value["name"]);
 	}
 });
-var ttsConnection = "";
-var ttsPlayer = createAudioPlayer();
-var previousTts = "";
 client.on('messageCreate', async msg => {
     console.log(`Content: ${msg.content} Author: ${msg.author.tag} Channel: ${msg.channel} Time: ${generateTimeString()}`);
     if (msg.author.bot) {
@@ -172,87 +154,6 @@ client.on('messageCreate', async msg => {
     }
     if (msg.channel.id === "1028891093544226928") {
         io.emit("dmgeted", msg.content, msg.author.tag, msg.author.id);
-    }
-	if(ttsList.indexOf(msg.channel.id) !== -1) {
-		if(!msg.member.voice) return;
-		ttsConnection = joinVoiceChannel({
-			channelId: msg.member.voice.channelId,
-			guildId: msg.channel.guild.id,
-			adapterCreator: msg.channel.guild.voiceAdapterCreator,
-			selfDeaf: false
-		});
-		await ttsConnection.subscribe(ttsPlayer);
-		if(previousTts === "") {
-			ttsConnection.on('stateChange', (old_state, new_state) => {
-				if (old_state.status === VoiceConnectionStatus.Ready && new_state.status === VoiceConnectionStatus.Connecting) {
-					connection.configureNetworking();
-				}
-			});
-		}
-		previousTts = msg.content;
-		jpGtts.save("./audio/tts.wav", msg.content, async function() {
-			const resource = createAudioResource("./audio/tts.wav");
-			ttsPlayer.play(resource);
-		});
-	}
-	if(freetalkList.indexOf(msg.channel.id) !== -1) {
-        msg.channel.sendTyping();
-        if(msg.content.startsWith("clever!")) {
-            chatAi.auth(config.token.chatsonic);
-            chatAi.chatsonic_V2BusinessContentChatsonic_post({
-                enable_google_results: false,
-                enable_memory: false,
-                input_text: msg.content.replace("c!", "")
-              }, {engine: 'premium'})
-                .then(({ data }) => {
-                    msg.reply(data.message);
-                })
-                .catch(err => console.error(err));
-        } else {
-		var options = {
-    		url: 'https://api.a3rt.recruit.co.jp/talk/v1/smalltalk',
-			method: 'POST',
-			form: {
-				"apikey": config.token.talk,
-				"query": msg.content,
-			},
-			json: true
-		}
-		requester(options, function (error, response, body) {
-			msg.reply(body.results[0].reply);
-		});
-        }
-	}
-    if (msg.content.match("s!")) {
-        if (msg.content.match("s!img")) {
-            if (msg.channel.id === "906717644282023996" || "1082192799874691126") {
-                msg.react("☑");
-                var msgcontentimg = msg.content.replace("s!img ", "");
-                (async () => {
-                    let image = await api.get(msgcontentimg);
-                    console.log(image);
-                    msg.channel.send({ files: [image] });
-                })();
-            } else {
-                return;
-            }
-        }
-        if (msg.content === "s!voice") {
-            const guild = msg.guild;
-            const vc = msg.member.voice.channel;
-            const connection = joinVoiceChannel({
-                guildId: guild.id,
-                channelId: vc.id,
-                adapterCreator: guild.voiceAdapterCreator,
-                selfMute: false,
-                selfDeaf: false,
-            });
-            const receiver = connection.receiver;
-            receiver.speaking.on('start', (userId) => {
-                console.log(userId);
-                //startRecognizeStream(guild, connection, userId);
-            });
-        }
     }
 });
 
@@ -1633,8 +1534,8 @@ io.on('connection', (socket) => {
     });
 	socket.on('voice', async (result, id) => {
 		console.log(result, id);
-		if(result.match("を再生")) {
-			const query = result.replace("を再生", "");
+		if(result.match("Play")) {
+			const query = result.replace("Play", "");
 			const api = new YoutubeMusicApi();
 				await api.initalize();
 				const stat = await api.search(url, "song")
@@ -1649,35 +1550,13 @@ io.on('connection', (socket) => {
                         }
                     });
 		}
-		if(result.match("停止")) {
+		if(result.match("Pause")) {
 			audio[id.toString()]["player"].pause();
 		}
-		if(result.match("再開")) {
+		if(result.match("Resume")) {
 			audio[id.toString()]["player"].unpause();
 		}
-		if(previousTts === "") {
-			ttsConnection.on('stateChange', (old_state, new_state) => {
-				if (old_state.status === VoiceConnectionStatus.Ready && new_state.status === VoiceConnectionStatus.Connecting) {
-					connection.configureNetworking();
-				}
-			});
-		}
-        var options = {
-    		url: 'https://api.a3rt.recruit.co.jp/talk/v1/smalltalk',
-			method: 'POST',
-			form: {
-				"apikey": config.token.talk,
-				"query": result,
-			},
-			json: true
-		}
-		requester(options, function (error, response, body) {
-            jpGtts.save("./audio/tts.wav", body.results[0].reply, async function() {
-                const resource = createAudioResource("./audio/tts.wav");
-                audio[id].player.play(resource);
-            });
-		});
-    });
+    	});
 });
 
 try {
@@ -1688,20 +1567,6 @@ try {
 }
 function getThumbnails(id) {
     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-}
-//const ttsApi = ["a-29v-69S3Z-5_5", "s07-I4j5G110C_f", "k96969642428X2i"];
-const { default: axios } = require("axios");
-const rpc = axios.create({ baseURL: "http://localhost:50021", proxy: false });
-async function genAudio(text, filepath) {
-    const audio_query = await rpc.post('audio_query?text=' + encodeURI(text) + '&speaker=1');
-    const synthesis = await rpc.post("synthesis?speaker=1", JSON.stringify(audio_query.data), {
-        responseType: 'arraybuffer',
-        headers: {
-            "accept": "audio/wav",
-            "Content-Type": "application/json"
-        }
-    });
-    fs.writeFileSync(filepath, new Buffer.from(synthesis.data), 'binary');
 }
 function getRandomInt(min, max) {
     min = Math.ceil(min);
