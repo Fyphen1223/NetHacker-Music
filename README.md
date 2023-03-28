@@ -7,6 +7,10 @@ This will be ready of your bot
 ![image](https://user-images.githubusercontent.com/89511960/228161298-9ca33caf-5132-4128-8103-a7bafdd11667.png)
 (Wait, boot time is 130s...!? What's going on with here... Basically, it will boot in 5s
 
+Music:
+![image](https://user-images.githubusercontent.com/89511960/228161986-0309bead-c4db-48b1-bb39-d1afff4cef3b.png)
+
+
 # Functions
 Play 
 
